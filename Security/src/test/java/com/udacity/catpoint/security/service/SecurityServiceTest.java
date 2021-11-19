@@ -1,7 +1,15 @@
 package com.udacity.catpoint.security.service;
 
 
+import java.awt.image.BufferedImage;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.*;
 import com.udacity.catpoint.image.service.ImageService;
+import com.udacity.catpoint.security.application.StatusListener;
 import com.udacity.catpoint.security.data.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,14 +19,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.awt.image.BufferedImage;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -32,6 +32,9 @@ public class SecurityServiceTest {
 
     @Mock
     private ImageService imageService;
+
+    @Mock
+    private StatusListener statusListener;
 
     @Mock
     private SecurityRepository securityRepository;
@@ -67,6 +70,16 @@ public class SecurityServiceTest {
         verify(securityRepository, atMostOnce()).setAlarmStatus(AlarmStatus.PENDING_ALARM);
     }
 
+    @ParameterizedTest
+    @EnumSource(value = ArmingStatus.class, names = {"ARMED_HOME", "ARMED_AWAY"})
+    void SensorsToInactiveWhenSystemArmed(ArmingStatus status) {
+        Set<Sensor> sensors = getSensors(3, true);
+        when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
+        when(securityRepository.getSensors()).thenReturn(sensors);
+        securityService.setArmingStatus(status);
+        securityService.getSensors().forEach(sensor -> {assertFalse(sensor.getActive());});
+    }
+
     @Test
     void changeAlarmStatusFromPendingToAlarm() {
         when(securityService.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
@@ -86,10 +99,30 @@ public class SecurityServiceTest {
         assertEquals(captor.getValue(), AlarmStatus.NO_ALARM);
     }
 
-    @Test
-    void alarmStateNotAffectedBySensorDeactivation(){
+    @ParameterizedTest
+    @EnumSource(value = AlarmStatus.class, names = {"NO_ALARM", "PENDING_ALARM", "ALARM"})
+    void alarmStateNotAffectedBySensorDeactivation(AlarmStatus status) {
+        when(securityRepository.getAlarmStatus()).thenReturn(status);
+        sensor.setActive(false);
         securityService.changeSensorActivationStatus(sensor, false);
-        verify(securityRepository, never()).setAlarmStatus(any());
+        verify(securityRepository, never()).setAlarmStatus(any(AlarmStatus.class));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AlarmStatus.class, names = {"NO_ALARM", "PENDING_ALARM"})
+    void noChangesToArmingStateWithSensorActivatedAndSystemDisarmed(AlarmStatus status) {
+        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
+        when(securityRepository.getAlarmStatus()).thenReturn(status);
+        securityService.changeSensorActivationStatus(sensor, true);
+        verify(securityRepository, never()).setArmingStatus(ArmingStatus.DISARMED);
+    }
+
+    @Test
+    void pendingStatausWithAlarmStateAndSystemDisarmed() {
+        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
+        when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.ALARM);
+        securityService.changeSensorActivationStatus(sensor);
+        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.PENDING_ALARM);
     }
 
     @Test
@@ -102,13 +135,24 @@ public class SecurityServiceTest {
     }
 
     @Test
-    void changeStatustoNoIfSystemDisarmed(){
+    void changeStatusToNoIfSystemDisarmed(){
         securityService.setArmingStatus(ArmingStatus.DISARMED);
         ArgumentCaptor<AlarmStatus> captor = ArgumentCaptor.forClass(AlarmStatus.class);
         verify(securityRepository, atMostOnce()).setAlarmStatus(captor.capture());
         assertEquals(captor.getValue(), AlarmStatus.NO_ALARM);
     }
 
+    @Test
+    void removeAndAddSensor() {
+        securityService.addSensor(sensor);
+        securityService.removeSensor(sensor);
+    }
+
+    @Test
+    void addAndRemoveStatusListener() {
+        securityService.addStatusListener(statusListener);
+        securityService.removeStatusListener(statusListener);
+    }
 
     @Test
     void alarmWhenImageHasCats(){
@@ -122,8 +166,6 @@ public class SecurityServiceTest {
 
     @Test
     void noAlarmIfImageHasNoCats(){
-//        Set<Sensor> inactiveSensors = getSensors(4, false);
-//        when(securityRepository.getSensors()).thenReturn(inactiveSensors);
         when(imageService.imageContainsCat(any(), anyFloat())).thenReturn(false);
         securityService.processImage(mock(BufferedImage.class));
         ArgumentCaptor<AlarmStatus> captor = ArgumentCaptor.forClass(AlarmStatus.class);

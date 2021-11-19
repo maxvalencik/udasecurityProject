@@ -81,11 +81,8 @@ public class SecurityService {
     public void addStatusListener(StatusListener statusListener) {
         statusListeners.add(statusListener);
     }
-
     public void removeStatusListener(StatusListener statusListener) {
-        statusListeners.remove(statusListener);
-    }
-
+        statusListeners.remove(statusListener);}
     /**
      * Change the alarm status of the system and notify all listeners.
      * @param status

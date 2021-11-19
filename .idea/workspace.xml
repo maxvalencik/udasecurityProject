@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18b6f779-fdff-42d6-882d-e3ed0f4f8f96" name="Changes" comment="" />
+    <list default="true" id="18b6f779-fdff-42d6-882d-e3ed0f4f8f96" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Security/src/main/java/com/udacity/catpoint/security/service/SecurityService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Security/src/main/java/com/udacity/catpoint/security/service/SecurityService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Security/src/test/java/com/udacity/catpoint/security/service/SecurityServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Security/src/test/java/com/udacity/catpoint/security/service/SecurityServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Security/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/Security/target/classes/module-info.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screenshot/executable_jar.PNG" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -35,7 +41,22 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="coverage" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JUnit.SecurityServiceTest (1)">
+    <configuration name="SecurityServiceTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="security" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.udacity.catpoint.security.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.udacity.catpoint.security.service" />
+      <option name="MAIN_CLASS_NAME" value="com.udacity.catpoint.security.service.SecurityServiceTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="SecurityServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Security" />
       <extension name="coverage">
@@ -53,6 +74,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.SecurityServiceTest (1)" />
         <item itemvalue="JUnit.SecurityServiceTest" />
       </list>
     </recent_temporary>
@@ -70,5 +92,10 @@
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/udasecurity$SecurityServiceTest__1_.ic" NAME="SecurityServiceTest (1) Coverage Results" MODIFIED="1637290908403" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.udacity.catpoint.security.service.*</FILTER>
+    </SUITE>
   </component>
 </project>
